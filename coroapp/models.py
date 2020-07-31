@@ -21,15 +21,20 @@ class User(db.Model, UserMixin):
 
 
 	def __repr__(self):
-		return 
+		return "<User: {0}, {1}, {2}>"
+				.format(self.first, self.last, self.email)
 
 class Doctor(User, db.Model):
 	 
 	__mapper_args__ = {
 		'polymorphic_identity' : 'doctor'
 	}
-	social_number = db.Column(db.String(20), nullable=False)
-	specialization = db.Column(db.String(50))
+	s_num = db.Column(db.String(20), nullable=False)
+	special = db.Column(db.String(50))
+
+	def __repr__(self):
+		return "<Doctor: {0}, {1}>"
+				.format(self.s_num, self.special)
 
 	
 
@@ -45,12 +50,20 @@ class Patient(db.Model):
 	marriage = db.Column(db.String, nullable=False)
 	next_kin = db.Column(db.String(80), nullable=False)
 	kin_tel = db.Column(db.Integer, nullable=False)
-	kin_relationship = db.Column(db.String(20), nullable=False)
+	kin_rship = db.Column(db.String(20), nullable=False)
 	natid = db.Column(db.Integer, nullable=False, unique=True)
 	phone = db.Column(db.Integer, nullable=False)
-	residence = db.Column(db.String(80), nullable=False)
+	reside = db.Column(db.String(80), nullable=False)
 	sub_county = db.Column(db.String(80), nullable=False)
 	facil_id = db.Column(db.Integer, db.ForeignKey('Facility.mfl'))
+
+	def __repr__(self):
+		return "<Patient: {}, {}, {}, {}, {},\
+						{}, {}, {}, {}, {}, {}>"
+				.format(self.first, self.last, self.age,
+				self.marriage, self.next_kin, self.kin_tel,
+				self.kin_rship, self.natid, self.phone,
+				self.reside, self.sub_county)
 
 
 class Facility(db.Model):
@@ -65,11 +78,29 @@ class Facility(db.Model):
 
 class Case(db.Model):
 
+	""" This table contains the information about covid 19 """
+
 	__tablename__ = 'case'
 
 	id = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.date, nullable=False)
 	is_screened = db.Column(db.Boolean, nullable=False)
-	confirmed_positive = db.Column(db.Boolean, nullable=False)
+	conf_pos = db.Column(db.Boolean, nullable=False)  # confirmed positive
+
+	__mapper_args__ = {
+		'polymorphic_on' : conf_pos,
+		'polymorphic_identity' : 'case' 
+	}
+
+
+class UnderCondition(Case, db.Model):
+
+	""" This table contains the information about underlying condition"""
+
+	__tablename__ = 'undercondition'
+
+	__mapper_args__ = {
+		'polymorphic_identity' = 'undercondition'
+	}
 	
 
