@@ -1,3 +1,4 @@
+import enum
 from flask_login import UserMixin
 from coroapp import db
 
@@ -84,8 +85,12 @@ class Case(db.Model):
 
 	id = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.date, nullable=False)
+	temp = db.Column(db.String(20), nullable=False)
+	weight = db.Column(db.Integer(), nullable=False)
+	blood_pressure = db.Column(db.Integer, nullable=False)
 	is_screened = db.Column(db.Boolean, nullable=False)
 	conf_pos = db.Column(db.Boolean, nullable=False)  # confirmed positive
+	patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
 
 	__mapper_args__ = {
 		'polymorphic_on' : conf_pos,
@@ -93,11 +98,29 @@ class Case(db.Model):
 	}
 
 
+class Diseases(enum.Enum):
+
+	INFECTIOUS = "Infectious"
+	HEREDITARY = "Hereditary"
+	DEFICIENCY = "Deficiency"
+	PHYSIOLOGICAL = "Physiological"
+
+
+class Symptoms(enum.Enum):
+	pass
+	
+
 class UnderCondition(Case, db.Model):
 
 	""" This table contains the information about underlying condition"""
 
 	__tablename__ = 'undercondition'
+
+	disease = db.Column(db.String(50))
+	disease_type = db.Column(db.Enum(Diseases))
+	symptoms = db.Column(db.Enum(Symptoms))
+	
+
 
 	__mapper_args__ = {
 		'polymorphic_identity' = 'undercondition'
