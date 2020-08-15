@@ -1,6 +1,8 @@
-import enum
-from flask_login import UserMixin
+from enum import Enum, auto
+from flask_login import UserMixin, user_loader
 from coroapp import db
+
+
 
 
 class User(db.Model, UserMixin):
@@ -12,10 +14,11 @@ class User(db.Model, UserMixin):
 	last = db.Column(db.String(80), nullable=False)
 	email = db.Column(db.String(80), unique=True, nullable=False)
 	password = db.Column(db.String(80), nullable=False)
+	user_type = db.Column(db.String(50), nullable=False)
 	is_admin = db.Column(db.Boolean, default=False)
 
 	__mapper_args__= {
-		'polymorphic_on': is_admin,
+		'polymorphic_on': user_type,
 		'polymorphic_identity' : 'user'
 
 	}
@@ -26,10 +29,13 @@ class User(db.Model, UserMixin):
 				.format(self.first, self.last, self.email)
 
 class Doctor(User, db.Model):
+
+	__tablename__ = 'doctor'
 	 
 	__mapper_args__ = {
 		'polymorphic_identity' : 'doctor'
 	}
+
 	s_num = db.Column(db.String(20), nullable=False)
 	special = db.Column(db.String(50))
 
@@ -90,6 +96,7 @@ class Case(db.Model):
 	blood_pressure = db.Column(db.Integer, nullable=False)
 	is_screened = db.Column(db.Boolean, nullable=False)
 	conf_pos = db.Column(db.Boolean, nullable=False)  # confirmed positive
+	case_type = db.Column(db.String(30), nullable=False)
 	patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'))
 
 	__mapper_args__ = {
@@ -100,21 +107,25 @@ class Case(db.Model):
 
 class Diseases(enum.Enum):
 
-	INFECTIOUS = "Infectious"
-	HEREDITARY = "Hereditary"
-	DEFICIENCY = "Deficiency"
-	PHYSIOLOGICAL = "Physiological"
+	INFECTIOUS = auto()
+	HEREDITARY = auto()
+	DEFICIENCY = auto()
+	PHYSIOLOGICAL = auto()
 
 
 class Symptoms(enum.Enum):
-	pass
+	
+	url = ""
+
+	urllib.request.get(url)
+	
 	
 
-class UnderCondition(Case, db.Model):
+class UnderLyingCondition(Case, db.Model):
 
 	""" This table contains the information about underlying condition"""
 
-	__tablename__ = 'undercondition'
+	__tablename__ = 'underlyingcondition'
 
 	disease = db.Column(db.String(50))
 	disease_type = db.Column(db.Enum(Diseases))
