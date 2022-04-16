@@ -7,16 +7,16 @@ Postgresql database version 9 and above
 
 Clone the repository in your machine using
 
-    # git clone https://www.github.com/oumao/corotrac
+    ``` git clone https://www.github.com/oumao/corotrac```
 
 Create a virtual environment in the folder you have cloned the repo as
 
-    # virtualenv venv
+    ``` virtualenv venv ```
 
 Install all the dependencies in the requirements file using
 
-    # pip install -r < requirements.txt
+    ``` pip install -r < requirements.txt ```
 
 run the project using
 
-    # python run.py
+    ``` python run.py ```
